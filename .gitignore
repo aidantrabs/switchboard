@@ -1,0 +1,33 @@
+# gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# ide
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# os
+.DS_Store
+Thumbs.db
+
+# java
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+*.war
+
+# spring boot
+*.log
+
+# environment
+.env
+*.env.local
+
+# node (dashboard)
+node_modules/
+dist/
