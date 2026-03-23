@@ -2,7 +2,7 @@ package com.switchboard.adapter.input.rest;
 
 import com.switchboard.adapter.input.rest.dto.EvaluateFlagRequest;
 import com.switchboard.adapter.input.rest.dto.EvaluationResponse;
-import com.switchboard.adapter.input.rest.dto.FlagConfigResponse;
+import com.switchboard.adapter.input.rest.dto.SdkFlagResponse;
 import com.switchboard.application.port.input.FlagEvaluationUseCase;
 import com.switchboard.domain.model.EvaluationContext;
 import com.switchboard.domain.model.EvaluationResult;
@@ -22,10 +22,10 @@ public class FlagClientController {
     }
 
     @GetMapping("/flags")
-    public List<FlagConfigResponse> getAllFlags(@PathVariable String projectKey,
-                                               @PathVariable String envKey) {
-        return flagEvaluation.getAllFlagConfigs(projectKey, envKey).stream()
-            .map(FlagConfigResponse::from)
+    public List<SdkFlagResponse> getAllFlags(@PathVariable String projectKey,
+                                            @PathVariable String envKey) {
+        return flagEvaluation.getAllFlags(projectKey, envKey).stream()
+            .map(fc -> SdkFlagResponse.from(fc.flag(), fc.config()))
             .toList();
     }
 

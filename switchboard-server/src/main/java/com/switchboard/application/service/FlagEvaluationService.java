@@ -41,7 +41,7 @@ public class FlagEvaluationService implements FlagEvaluationUseCase {
     }
 
     @Override
-    public List<FlagEnvironmentConfig> getAllFlagConfigs(String projectKey, String environmentKey) {
+    public List<FlagWithConfig> getAllFlags(String projectKey, String environmentKey) {
         Project project = projectPersistence.findByKey(projectKey)
             .orElseThrow(() -> new ProjectNotFoundException(projectKey));
 
@@ -49,6 +49,12 @@ public class FlagEvaluationService implements FlagEvaluationUseCase {
                 project.getId(), environmentKey)
             .orElseThrow(() -> new IllegalArgumentException("environment not found: " + environmentKey));
 
-        return flagPersistence.findAllConfigsByEnvironment(project.getId(), env.getId());
+        List<FeatureFlag> flags = flagPersistence.findAllByProjectId(project.getId());
+
+        return flags.stream().map(flag -> {
+            FlagEnvironmentConfig config = flagPersistence.findConfig(flag.getId(), env.getId())
+                .orElse(FlagEnvironmentConfig.create(flag.getId(), env.getId()));
+            return new FlagWithConfig(flag, config);
+        }).toList();
     }
 }

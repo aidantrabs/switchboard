@@ -7,8 +7,9 @@ server:
 
 switchboard:
   api-url: http://${SWITCHBOARD_HOST:localhost}:8080
-  api-key: ${SWITCHBOARD_API_KEY:sb_demo_key}
+  api-key: ${SWITCHBOARD_API_KEY:}
   project: demo-project
   environment: dev
-  mode: ${SWITCHBOARD_MODE:local}
+  mode: ${SWITCHBOARD_MODE:remote}
   local-flags-file: classpath:flags.json
+  poll-interval-seconds: 5
