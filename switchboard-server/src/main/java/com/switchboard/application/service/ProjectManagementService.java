@@ -41,4 +41,13 @@ public class ProjectManagementService implements ProjectManagementUseCase {
 
         return projectPersistence.findEnvironmentsByProjectId(project.getId());
     }
+
+    @Override
+    public Environment createEnvironment(String projectKey, String name, String key, int sortOrder) {
+        Project project = projectPersistence.findByKey(projectKey)
+            .orElseThrow(() -> new ProjectNotFoundException(projectKey));
+
+        Environment environment = Environment.create(project.getId(), name, key, sortOrder);
+        return projectPersistence.saveEnvironment(environment);
+    }
 }

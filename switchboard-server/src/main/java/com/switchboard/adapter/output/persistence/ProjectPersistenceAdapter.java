@@ -56,4 +56,20 @@ public class ProjectPersistenceAdapter implements ProjectPersistencePort {
         return environmentRepository.findByProjectIdAndKey(projectId, environmentKey)
             .map(ProjectPersistenceMapper::toDomain);
     }
+
+    @Override
+    public Environment saveEnvironment(Environment environment) {
+        var entity = new com.switchboard.adapter.output.persistence.entity.EnvironmentJpaEntity(
+            environment.getId(), environment.getProjectId(),
+            environment.getName(), environment.getKey(), environment.getSortOrder());
+        var saved = environmentRepository.save(entity);
+        return ProjectPersistenceMapper.toDomain(saved);
+    }
+
+    @Override
+    public List<Project> findAll() {
+        return projectRepository.findAll().stream()
+            .map(ProjectPersistenceMapper::toDomain)
+            .toList();
+    }
 }

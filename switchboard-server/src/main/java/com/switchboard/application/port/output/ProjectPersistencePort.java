@@ -18,4 +18,8 @@ public interface ProjectPersistencePort {
     List<Environment> findEnvironmentsByProjectId(UUID projectId);
 
     Optional<Environment> findEnvironmentByProjectIdAndKey(UUID projectId, String environmentKey);
+
+    Environment saveEnvironment(Environment environment);
+
+    List<Project> findAll();
 }

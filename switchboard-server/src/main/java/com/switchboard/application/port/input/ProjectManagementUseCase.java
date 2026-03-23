@@ -15,4 +15,6 @@ public interface ProjectManagementUseCase {
     Project createProject(UUID organizationId, String name, String key);
 
     List<Environment> listEnvironments(String projectKey);
+
+    Environment createEnvironment(String projectKey, String name, String key, int sortOrder);
 }

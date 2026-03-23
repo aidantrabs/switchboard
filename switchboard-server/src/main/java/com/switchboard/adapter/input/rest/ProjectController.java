@@ -1,8 +1,9 @@
 package com.switchboard.adapter.input.rest;
 
-import com.switchboard.adapter.input.rest.dto.EnvironmentResponse;
-import com.switchboard.adapter.input.rest.dto.ProjectResponse;
+import com.switchboard.adapter.input.rest.dto.*;
 import com.switchboard.application.port.input.ProjectManagementUseCase;
+import com.switchboard.application.port.output.ProjectPersistencePort;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,9 +13,19 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectManagementUseCase projectManagement;
+    private final ProjectPersistencePort projectPersistence;
 
-    public ProjectController(ProjectManagementUseCase projectManagement) {
+    public ProjectController(ProjectManagementUseCase projectManagement,
+                             ProjectPersistencePort projectPersistence) {
         this.projectManagement = projectManagement;
+        this.projectPersistence = projectPersistence;
+    }
+
+    @GetMapping
+    public List<ProjectResponse> listProjects() {
+        return projectPersistence.findAll().stream()
+            .map(ProjectResponse::from)
+            .toList();
     }
 
     @GetMapping("/{projectKey}")
@@ -22,10 +33,25 @@ public class ProjectController {
         return ProjectResponse.from(projectManagement.getProject(projectKey));
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProjectResponse createProject(@RequestBody CreateProjectRequest request) {
+        return ProjectResponse.from(
+            projectManagement.createProject(request.organizationId(), request.name(), request.key()));
+    }
+
     @GetMapping("/{projectKey}/environments")
     public List<EnvironmentResponse> listEnvironments(@PathVariable String projectKey) {
         return projectManagement.listEnvironments(projectKey).stream()
             .map(EnvironmentResponse::from)
             .toList();
+    }
+
+    @PostMapping("/{projectKey}/environments")
+    @ResponseStatus(HttpStatus.CREATED)
+    public EnvironmentResponse createEnvironment(@PathVariable String projectKey,
+                                                 @RequestBody CreateEnvironmentRequest request) {
+        return EnvironmentResponse.from(
+            projectManagement.createEnvironment(projectKey, request.name(), request.key(), request.sortOrder()));
     }
 }
