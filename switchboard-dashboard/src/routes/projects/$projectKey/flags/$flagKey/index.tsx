@@ -9,6 +9,7 @@ import { Badge } from "../../../../../components/ui/badge";
 import { Separator } from "../../../../../components/ui/separator";
 import { FlagToggle } from "../../../../../components/flags/FlagToggle";
 import { RolloutSlider } from "../../../../../components/flags/RolloutSlider";
+import { EvaluatePanel } from "../../../../../components/flags/EvaluatePanel";
 import { Code, Layers } from "lucide-react";
 
 export const flagDetailRoute = createRoute({
@@ -139,6 +140,14 @@ function FlagDetailPage() {
               />
             </CardContent>
           </Card>
+
+          {environments?.[0] && (
+            <EvaluatePanel
+              projectKey={projectKey}
+              envKey={environments[0].key}
+              flagKey={flagKey}
+            />
+          )}
         </div>
       </div>
     </PageLayout>

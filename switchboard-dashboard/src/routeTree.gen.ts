@@ -5,7 +5,6 @@ import { flagListRoute } from "./routes/projects/$projectKey/flags/index";
 import { flagDetailRoute } from "./routes/projects/$projectKey/flags/$flagKey/index";
 import { auditRoute } from "./routes/audit";
 import { settingsRoute } from "./routes/settings";
-
 const routeTree = rootRoute.addChildren([
   indexRoute,
   projectsRoute.addChildren([

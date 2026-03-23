@@ -11,6 +11,9 @@ server:
 dashboard:
 	cd switchboard-dashboard && npm run dev
 
+landing:
+	cd switchboard-landing && npm run dev
+
 demo:
 	./gradlew :switchboard-demo-service:bootRun
 
