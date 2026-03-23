@@ -1,4 +1,4 @@
-import { createRoute } from "@tanstack/react-router";
+import { createRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { rootRoute } from "./__root";
 import { projectQueries } from "../api/projects";
@@ -105,13 +105,15 @@ function StatCard({
 }
 
 function QuickLink({ href, label }: { href: string; label: string }) {
+  const navigate = useNavigate();
+
   return (
-    <a
-      href={href}
-      className="flex items-center justify-between rounded-lg border px-4 py-3 text-sm transition-colors hover:bg-muted"
+    <button
+      onClick={() => navigate({ to: href })}
+      className="flex w-full items-center justify-between rounded-lg border px-4 py-3 text-sm transition-colors hover:bg-muted text-left"
     >
       {label}
       <span className="text-muted-foreground">&rarr;</span>
-    </a>
+    </button>
   );
 }

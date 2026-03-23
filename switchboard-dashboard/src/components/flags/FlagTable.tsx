@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import {
   createColumnHelper,
   flexRender,
@@ -71,6 +72,7 @@ export function FlagTable({
   data: FlagResponse[];
   projectKey: string;
 }) {
+  const navigate = useNavigate();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 
@@ -127,12 +129,12 @@ export function FlagTable({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {cell.column.id === "key" ? (
-                        <a
-                          href={`/projects/${projectKey}/flags/${row.original.key}`}
-                          className="hover:underline"
+                        <button
+                          onClick={() => navigate({ to: `/projects/${projectKey}/flags/${row.original.key}` as string })}
+                          className="hover:underline text-left"
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </a>
+                        </button>
                       ) : (
                         flexRender(cell.column.columnDef.cell, cell.getContext())
                       )}

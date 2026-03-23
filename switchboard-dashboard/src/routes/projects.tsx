@@ -1,4 +1,4 @@
-import { createRoute, Outlet } from "@tanstack/react-router";
+import { createRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { projectQueries } from "../api/projects";
 import { rootRoute } from "./__root";
@@ -52,25 +52,36 @@ function ProjectsPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => (
-            <a key={p.key} href={`/projects/${p.key}/flags`} className="group">
-              <Card className="transition-colors group-hover:border-foreground/20">
-                <CardHeader className="flex flex-row items-start justify-between space-y-0">
-                  <div className="space-y-1">
-                    <CardTitle className="text-base">{p.name}</CardTitle>
-                    <CardDescription className="font-mono text-xs">{p.key}</CardDescription>
-                  </div>
-                  <ChevronRight size={16} className="text-muted-foreground mt-1 transition-transform group-hover:translate-x-0.5" />
-                </CardHeader>
-                <CardContent>
-                  <Badge variant="secondary">
-                    {new Date(p.createdAt).toLocaleDateString()}
-                  </Badge>
-                </CardContent>
-              </Card>
-            </a>
+            <ProjectCard key={p.key} projectKey={p.key} name={p.name} createdAt={p.createdAt} />
           ))}
         </div>
       )}
     </PageLayout>
+  );
+}
+
+function ProjectCard({ projectKey, name, createdAt }: { projectKey: string; name: string; createdAt: string }) {
+  const navigate = useNavigate();
+
+  return (
+    <button
+      onClick={() => navigate({ to: `/projects/${projectKey}/flags` as string })}
+      className="group text-left w-full"
+    >
+      <Card className="transition-colors group-hover:border-foreground/20">
+        <CardHeader className="flex flex-row items-start justify-between space-y-0">
+          <div className="space-y-1">
+            <CardTitle className="text-base">{name}</CardTitle>
+            <CardDescription className="font-mono text-xs">{projectKey}</CardDescription>
+          </div>
+          <ChevronRight size={16} className="text-muted-foreground mt-1 transition-transform group-hover:translate-x-0.5" />
+        </CardHeader>
+        <CardContent>
+          <Badge variant="secondary">
+            {new Date(createdAt).toLocaleDateString()}
+          </Badge>
+        </CardContent>
+      </Card>
+    </button>
   );
 }

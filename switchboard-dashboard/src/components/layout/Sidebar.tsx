@@ -1,4 +1,4 @@
-import { useLocation } from "@tanstack/react-router";
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import { LayoutDashboard, FolderOpen, ScrollText, Settings, ToggleRight } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Separator } from "../ui/separator";
@@ -39,13 +39,14 @@ export function Sidebar() {
 
 function NavLink({ to, icon: Icon, label }: { to: string; icon: React.ElementType; label: string }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const isActive = to === "/" ? location.pathname === "/" : location.pathname.startsWith(to);
 
   return (
-    <a
-      href={to}
+    <button
+      onClick={() => navigate({ to })}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+        "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors text-left",
         isActive
           ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
           : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground",
@@ -53,6 +54,6 @@ function NavLink({ to, icon: Icon, label }: { to: string; icon: React.ElementTyp
     >
       <Icon size={16} />
       {label}
-    </a>
+    </button>
   );
 }
