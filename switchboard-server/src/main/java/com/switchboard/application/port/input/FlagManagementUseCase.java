@@ -9,6 +9,10 @@ import java.util.List;
 
 public interface FlagManagementUseCase {
 
+    List<FeatureFlag> listFlags(String projectKey);
+
+    FeatureFlag getFlag(String projectKey, String flagKey);
+
     FeatureFlag createFlag(String projectKey, String key, String name, String description,
                            FlagType flagType, String defaultVariant, List<Variant> variants);
 

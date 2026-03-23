@@ -31,6 +31,23 @@ public class FlagManagementService implements FlagManagementUseCase {
     }
 
     @Override
+    public List<FeatureFlag> listFlags(String projectKey) {
+        Project project = projectPersistence.findByKey(projectKey)
+            .orElseThrow(() -> new ProjectNotFoundException(projectKey));
+
+        return flagPersistence.findAllByProjectId(project.getId());
+    }
+
+    @Override
+    public FeatureFlag getFlag(String projectKey, String flagKey) {
+        Project project = projectPersistence.findByKey(projectKey)
+            .orElseThrow(() -> new ProjectNotFoundException(projectKey));
+
+        return flagPersistence.findByProjectIdAndKey(project.getId(), flagKey)
+            .orElseThrow(() -> new FlagNotFoundException(flagKey));
+    }
+
+    @Override
     public FeatureFlag createFlag(String projectKey, String key, String name, String description,
                                   FlagType flagType, String defaultVariant, List<Variant> variants) {
         Project project = projectPersistence.findByKey(projectKey)

@@ -18,6 +18,19 @@ public class FlagManagementController {
         this.flagManagement = flagManagement;
     }
 
+    @GetMapping
+    public List<FlagResponse> listFlags(@PathVariable String projectKey) {
+        return flagManagement.listFlags(projectKey).stream()
+            .map(FlagResponse::from)
+            .toList();
+    }
+
+    @GetMapping("/{flagKey}")
+    public FlagResponse getFlag(@PathVariable String projectKey,
+                                @PathVariable String flagKey) {
+        return FlagResponse.from(flagManagement.getFlag(projectKey, flagKey));
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public FlagResponse createFlag(@PathVariable String projectKey,
