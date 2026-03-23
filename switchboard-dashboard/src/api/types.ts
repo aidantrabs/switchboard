@@ -27,13 +27,6 @@ export interface FlagResponse {
   updatedAt: string;
 }
 
-export interface FlagConfigResponse {
-  flagId: string;
-  enabled: boolean;
-  rolloutPercentage: number;
-  targetingRules: TargetingRule[];
-}
-
 export interface SdkFlagResponse {
   key: string;
   enabled: boolean;
