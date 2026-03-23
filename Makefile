@@ -79,6 +79,12 @@ swagger:
 cli:
 	./gradlew :switchboard-cli:run --args="$(ARGS) --api-url http://localhost:8080"
 
+demos:
+	cd switchboard-landing && vhs tapes/quickstart.tape
+	cd switchboard-landing && vhs tapes/cli.tape
+	cd switchboard-landing && vhs tapes/toggle.tape
+	cd switchboard-landing && vhs tapes/sdk.tape
+
 clean:
 	./gradlew clean
 	rm -rf switchboard-dashboard/dist switchboard-dashboard/node_modules
