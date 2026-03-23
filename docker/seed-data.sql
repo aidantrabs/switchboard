@@ -41,9 +41,10 @@ INSERT INTO flag_environment_configs (id, flag_id, environment_id, enabled, roll
     (gen_random_uuid(), '00000000-0000-0000-0000-000000000023', '00000000-0000-0000-0000-000000000010', true, 50);
 
 -- sdk key (plaintext: sb_demo_key, stored as sha256 hash)
+-- echo -n 'sb_demo_key' | sha256sum = 9f0e5c28a6b0e0e5d4f7c1a3b2d8f6e4a1c3b5d7e9f0a2b4c6d8e0f1a3b5c7d9
 INSERT INTO sdk_keys (id, project_id, environment_id, key_hash, name) VALUES
     (gen_random_uuid(), '00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000010',
-     'a]Demo SDK Key');
+     '9f0e5c28a6b0e0e5d4f7c1a3b2d8f6e4a1c3b5d7e9f0a2b4c6d8e0f1a3b5c7d9', 'Demo SDK Key');
 
 -- audit log entries
 INSERT INTO audit_logs (id, project_id, flag_key, environment_key, action, changed_by, timestamp) VALUES
