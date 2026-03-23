@@ -10,7 +10,8 @@ const routeTree = rootRoute.addChildren([
   indexRoute,
   projectsRoute.addChildren([
     projectsIndexRoute,
-    flagListRoute.addChildren([flagDetailRoute]),
+    flagListRoute,
+    flagDetailRoute,
   ]),
   auditRoute,
   settingsRoute,

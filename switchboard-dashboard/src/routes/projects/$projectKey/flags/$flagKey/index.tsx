@@ -1,6 +1,6 @@
 import { createRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { flagListRoute } from "../index";
+import { projectsRoute } from "../../../../projects";
 import { flagQueries } from "../../../../../api/flags";
 import { projectQueries } from "../../../../../api/projects";
 import { PageLayout } from "../../../../../components/layout/PageLayout";
@@ -12,8 +12,8 @@ import { RolloutSlider } from "../../../../../components/flags/RolloutSlider";
 import { Code, Layers } from "lucide-react";
 
 export const flagDetailRoute = createRoute({
-  getParentRoute: () => flagListRoute,
-  path: "$flagKey",
+  getParentRoute: () => projectsRoute,
+  path: "$projectKey/flags/$flagKey",
   component: FlagDetailPage,
 });
 
