@@ -1,9 +1,11 @@
 package com.switchboard.adapter.output.messaging;
 
 import com.switchboard.application.port.output.FlagChangeEventPort;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConditionalOnMissingBean(KafkaFlagChangeEventAdapter.class)
 public class NoOpFlagChangeEventAdapter implements FlagChangeEventPort {
 
     @Override
