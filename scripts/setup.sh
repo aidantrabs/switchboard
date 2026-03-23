@@ -42,10 +42,10 @@ echo ""
 echo "creating organization..."
 ORG_RESPONSE=$(curl -s -X POST "$API_URL/api/v1/organizations" \
     -H "Content-Type: application/json" \
-    -d '{"name":"Default Organization","slug":"default"}')
-ORG_ID=$(echo "$ORG_RESPONSE" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
-if [ -z "$ORG_ID" ]; then
-    ORG_ID=$(curl -s "$API_URL/api/v1/organizations" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+    -d '{"name":"Default Organization","slug":"default"}' || true)
+ORG_ID=$(echo "$ORG_RESPONSE" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4 || true)
+if [ -z "${ORG_ID:-}" ]; then
+    ORG_ID=$(curl -s "$API_URL/api/v1/organizations" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4 || true)
     echo "  org: $ORG_ID (already exists)"
 else
     echo "  org: $ORG_ID"
