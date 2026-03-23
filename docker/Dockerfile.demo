@@ -1,0 +1,10 @@
+FROM eclipse-temurin:22-jdk AS build
+WORKDIR /app
+COPY .. .
+RUN ./gradlew :switchboard-demo-service:bootJar --no-daemon -x test
+
+FROM eclipse-temurin:22-jre
+WORKDIR /app
+COPY --from=build /app/switchboard-demo-service/build/libs/*.jar app.jar
+EXPOSE 8081
+ENTRYPOINT ["java", "-jar", "app.jar"]

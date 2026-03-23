@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: switchboard-demo-service
+
+server:
+  port: 8081
+
+switchboard:
+  api-url: http://${SWITCHBOARD_HOST:localhost}:8080
+  api-key: ${SWITCHBOARD_API_KEY:sb_demo_key}
+  project: demo-project
+  environment: dev
+  mode: ${SWITCHBOARD_MODE:local}
+  local-flags-file: classpath:flags.json
