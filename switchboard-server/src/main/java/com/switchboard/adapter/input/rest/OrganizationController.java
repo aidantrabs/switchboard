@@ -2,8 +2,7 @@ package com.switchboard.adapter.input.rest;
 
 import com.switchboard.adapter.input.rest.dto.CreateOrganizationRequest;
 import com.switchboard.adapter.input.rest.dto.OrganizationResponse;
-import com.switchboard.adapter.output.persistence.entity.OrganizationJpaEntity;
-import com.switchboard.adapter.output.persistence.repository.OrganizationJpaRepository;
+import com.switchboard.application.port.output.OrganizationPersistencePort;
 import com.switchboard.domain.model.Organization;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,16 +13,15 @@ import java.util.List;
 @RequestMapping("/api/v1/organizations")
 public class OrganizationController {
 
-    private final OrganizationJpaRepository repository;
+    private final OrganizationPersistencePort organizationPersistence;
 
-    public OrganizationController(OrganizationJpaRepository repository) {
-        this.repository = repository;
+    public OrganizationController(OrganizationPersistencePort organizationPersistence) {
+        this.organizationPersistence = organizationPersistence;
     }
 
     @GetMapping
     public List<OrganizationResponse> list() {
-        return repository.findAll().stream()
-            .map(e -> new Organization(e.getId(), e.getName(), e.getSlug(), e.getCreatedAt()))
+        return organizationPersistence.findAll().stream()
             .map(OrganizationResponse::from)
             .toList();
     }
@@ -32,9 +30,6 @@ public class OrganizationController {
     @ResponseStatus(HttpStatus.CREATED)
     public OrganizationResponse create(@RequestBody CreateOrganizationRequest request) {
         Organization org = Organization.create(request.name(), request.slug());
-        var entity = new OrganizationJpaEntity(
-            org.getId(), org.getName(), org.getSlug(), org.getCreatedAt());
-        repository.save(entity);
-        return OrganizationResponse.from(org);
+        return OrganizationResponse.from(organizationPersistence.save(org));
     }
 }

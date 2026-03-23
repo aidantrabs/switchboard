@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public interface ProjectManagementUseCase {
 
+    List<Project> listAllProjects();
+
     List<Project> listProjects(UUID organizationId);
 
     Project getProject(String projectKey);

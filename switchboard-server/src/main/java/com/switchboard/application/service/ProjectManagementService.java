@@ -18,6 +18,11 @@ public class ProjectManagementService implements ProjectManagementUseCase {
     }
 
     @Override
+    public List<Project> listAllProjects() {
+        return projectPersistence.findAll();
+    }
+
+    @Override
     public List<Project> listProjects(UUID organizationId) {
         return projectPersistence.findAllByOrganizationId(organizationId);
     }
