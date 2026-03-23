@@ -12,3 +12,4 @@ rootProject.name = "switchboard"
 
 include("switchboard-server")
 include("switchboard-sdk-java")
+include("switchboard-spring-boot-starter")
