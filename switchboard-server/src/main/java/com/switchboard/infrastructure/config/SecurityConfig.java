@@ -28,16 +28,22 @@ public class SecurityConfig {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/swagger-ui/**", "/swagger-ui.html",
-                    "/v3/api-docs/**",
-                    "/actuator/**"
-                ).permitAll()
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(apiKeyFilter(), UsernamePasswordAuthenticationFilter.class);
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        if (apiKey == null) {
+            http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        } else {
+            http
+                .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(
+                        "/swagger-ui/**", "/swagger-ui.html",
+                        "/v3/api-docs/**",
+                        "/actuator/**"
+                    ).permitAll()
+                    .anyRequest().authenticated()
+                )
+                .addFilterBefore(apiKeyFilter(), UsernamePasswordAuthenticationFilter.class);
+        }
 
         return http.build();
     }
