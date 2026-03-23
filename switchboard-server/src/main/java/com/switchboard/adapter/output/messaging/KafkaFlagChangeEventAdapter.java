@@ -1,12 +1,14 @@
 package com.switchboard.adapter.output.messaging;
 
 import com.switchboard.application.port.output.FlagChangeEventPort;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
+@ConditionalOnBean(KafkaTemplate.class)
 public class KafkaFlagChangeEventAdapter implements FlagChangeEventPort {
 
     private static final String TOPIC_PREFIX = "switchboard.flag-events.";
