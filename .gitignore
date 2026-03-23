@@ -28,6 +28,9 @@ Thumbs.db
 .env
 *.env.local
 
-# node (dashboard)
+# node (dashboard + landing)
 node_modules/
 dist/
+
+# vhs artifacts
+switchboard-landing/switchboard/
