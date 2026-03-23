@@ -34,6 +34,15 @@ export interface FlagConfigResponse {
   targetingRules: TargetingRule[];
 }
 
+export interface SdkFlagResponse {
+  key: string;
+  enabled: boolean;
+  defaultVariant: string;
+  variants: Variant[];
+  rolloutPercentage: number;
+  targetingRules: TargetingRule[];
+}
+
 export interface EvaluationResponse {
   flagKey: string;
   variant: string;

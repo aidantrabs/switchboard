@@ -1,6 +1,6 @@
 import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "./client";
-import type { FlagResponse, FlagConfigResponse, EvaluationResponse } from "./types";
+import type { FlagResponse, SdkFlagResponse, EvaluationResponse } from "./types";
 
 export const flagKeys = {
   all: (projectKey: string) => ["flags", projectKey] as const,
@@ -22,8 +22,8 @@ export const flagQueries = {
     queryOptions({
       queryKey: flagKeys.configs(projectKey, envKey),
       queryFn: () =>
-        api.get<FlagConfigResponse[]>(`/api/v1/client/${projectKey}/${envKey}/flags`),
-      staleTime: 30_000,
+        api.get<SdkFlagResponse[]>(`/api/v1/client/${projectKey}/${envKey}/flags`),
+      staleTime: 10_000,
     }),
 };
 
@@ -34,7 +34,8 @@ export function useToggleFlag(projectKey: string) {
     mutationFn: ({ flagKey, envKey }: { flagKey: string; envKey: string }) =>
       api.patch(`/api/v1/projects/${projectKey}/flags/${flagKey}/environments/${envKey}/toggle`),
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: flagKeys.all(projectKey) });
+      queryClient.invalidateQueries({ queryKey: ["flags"] });
+      queryClient.invalidateQueries({ queryKey: ["flagConfigs"] });
     },
   });
 }
@@ -56,7 +57,8 @@ export function useUpdateRollout(projectKey: string) {
         percentage,
       }),
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: flagKeys.all(projectKey) });
+      queryClient.invalidateQueries({ queryKey: ["flags"] });
+      queryClient.invalidateQueries({ queryKey: ["flagConfigs"] });
     },
   });
 }

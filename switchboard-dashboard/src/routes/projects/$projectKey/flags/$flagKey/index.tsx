@@ -7,8 +7,7 @@ import { PageLayout } from "../../../../../components/layout/PageLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../../../components/ui/card";
 import { Badge } from "../../../../../components/ui/badge";
 import { Separator } from "../../../../../components/ui/separator";
-import { FlagToggle } from "../../../../../components/flags/FlagToggle";
-import { RolloutSlider } from "../../../../../components/flags/RolloutSlider";
+import { EnvironmentRow } from "../../../../../components/flags/EnvironmentRow";
 import { EvaluatePanel } from "../../../../../components/flags/EvaluatePanel";
 import { Code, Layers } from "lucide-react";
 
@@ -56,37 +55,15 @@ function FlagDetailPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {environments?.map((env) => (
-                <div key={env.key} className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <p className="text-sm font-medium">{env.name}</p>
-                    <p className="text-xs text-muted-foreground font-mono">{env.key}</p>
-                  </div>
-                  <FlagToggle
-                    projectKey={projectKey}
-                    flagKey={flagKey}
-                    envKey={env.key}
-                    enabled={false}
-                  />
-                </div>
-              )) ?? (
-                <p className="text-sm text-muted-foreground">No environments configured.</p>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Rollout</CardTitle>
-              <CardDescription>Percentage-based gradual rollout</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {environments?.[0] && (
-                <RolloutSlider
+                <EnvironmentRow
+                  key={env.key}
                   projectKey={projectKey}
                   flagKey={flagKey}
-                  envKey={environments[0].key}
-                  initialPercentage={0}
+                  envKey={env.key}
+                  envName={env.name}
                 />
+              )) ?? (
+                <p className="text-sm text-muted-foreground">No environments configured.</p>
               )}
             </CardContent>
           </Card>
