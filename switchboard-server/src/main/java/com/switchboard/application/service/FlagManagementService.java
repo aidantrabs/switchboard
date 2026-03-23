@@ -9,6 +9,7 @@ import com.switchboard.domain.exception.DuplicateFlagKeyException;
 import com.switchboard.domain.exception.FlagNotFoundException;
 import com.switchboard.domain.exception.ProjectNotFoundException;
 import com.switchboard.domain.model.*;
+import com.switchboard.domain.service.FlagStateSerializer;
 
 import java.util.List;
 
@@ -43,8 +44,9 @@ public class FlagManagementService implements FlagManagementUseCase {
             flagType, defaultVariant, variants);
         FeatureFlag saved = flagPersistence.save(flag);
 
+        String afterState = FlagStateSerializer.serializeFlag(saved);
         auditLogPersistence.save(AuditLog.create(
-            project.getId(), key, null, "FLAG_CREATED", "system", null, null));
+            project.getId(), key, null, "FLAG_CREATED", "system", null, afterState));
 
         flagChangeEvent.publishFlagCreated(projectKey, null, key, "system");
 
@@ -60,11 +62,13 @@ public class FlagManagementService implements FlagManagementUseCase {
         FeatureFlag flag = flagPersistence.findByProjectIdAndKey(project.getId(), flagKey)
             .orElseThrow(() -> new FlagNotFoundException(flagKey));
 
+        String beforeState = FlagStateSerializer.serializeFlag(flag);
         flag.update(name, description, defaultVariant, variants);
         FeatureFlag saved = flagPersistence.save(flag);
+        String afterState = FlagStateSerializer.serializeFlag(saved);
 
         auditLogPersistence.save(AuditLog.create(
-            project.getId(), flagKey, null, "FLAG_UPDATED", "system", null, null));
+            project.getId(), flagKey, null, "FLAG_UPDATED", "system", beforeState, afterState));
 
         flagChangeEvent.publishFlagUpdated(projectKey, null, flagKey, "system");
 
@@ -79,10 +83,11 @@ public class FlagManagementService implements FlagManagementUseCase {
         FeatureFlag flag = flagPersistence.findByProjectIdAndKey(project.getId(), flagKey)
             .orElseThrow(() -> new FlagNotFoundException(flagKey));
 
+        String beforeState = FlagStateSerializer.serializeFlag(flag);
         flagPersistence.delete(flag.getId());
 
         auditLogPersistence.save(AuditLog.create(
-            project.getId(), flagKey, null, "FLAG_DELETED", "system", null, null));
+            project.getId(), flagKey, null, "FLAG_DELETED", "system", beforeState, null));
 
         flagChangeEvent.publishFlagDeleted(projectKey, null, flagKey, "system");
     }
@@ -102,11 +107,14 @@ public class FlagManagementService implements FlagManagementUseCase {
         FlagEnvironmentConfig config = flagPersistence.findConfig(flag.getId(), env.getId())
             .orElse(FlagEnvironmentConfig.create(flag.getId(), env.getId()));
 
+        String beforeState = FlagStateSerializer.serializeConfig(config);
         config.toggle();
         flagPersistence.saveConfig(config);
+        String afterState = FlagStateSerializer.serializeConfig(config);
 
         auditLogPersistence.save(AuditLog.create(
-            project.getId(), flagKey, environmentKey, "FLAG_TOGGLED", "system", null, null));
+            project.getId(), flagKey, environmentKey, "FLAG_TOGGLED", "system",
+            beforeState, afterState));
 
         flagChangeEvent.publishFlagToggled(projectKey, environmentKey, flagKey,
             config.isEnabled(), "system");
@@ -128,11 +136,14 @@ public class FlagManagementService implements FlagManagementUseCase {
         FlagEnvironmentConfig config = flagPersistence.findConfig(flag.getId(), env.getId())
             .orElse(FlagEnvironmentConfig.create(flag.getId(), env.getId()));
 
+        String beforeState = FlagStateSerializer.serializeConfig(config);
         config.updateRolloutPercentage(percentage);
         flagPersistence.saveConfig(config);
+        String afterState = FlagStateSerializer.serializeConfig(config);
 
         auditLogPersistence.save(AuditLog.create(
-            project.getId(), flagKey, environmentKey, "ROLLOUT_UPDATED", "system", null, null));
+            project.getId(), flagKey, environmentKey, "ROLLOUT_UPDATED", "system",
+            beforeState, afterState));
 
         flagChangeEvent.publishRolloutUpdated(projectKey, environmentKey, flagKey,
             percentage, "system");
@@ -154,11 +165,14 @@ public class FlagManagementService implements FlagManagementUseCase {
         FlagEnvironmentConfig config = flagPersistence.findConfig(flag.getId(), env.getId())
             .orElse(FlagEnvironmentConfig.create(flag.getId(), env.getId()));
 
+        String beforeState = FlagStateSerializer.serializeConfig(config);
         config.updateTargetingRules(rules);
         flagPersistence.saveConfig(config);
+        String afterState = FlagStateSerializer.serializeConfig(config);
 
         auditLogPersistence.save(AuditLog.create(
-            project.getId(), flagKey, environmentKey, "TARGETING_UPDATED", "system", null, null));
+            project.getId(), flagKey, environmentKey, "TARGETING_UPDATED", "system",
+            beforeState, afterState));
 
         flagChangeEvent.publishTargetingUpdated(projectKey, environmentKey, flagKey, "system");
     }
