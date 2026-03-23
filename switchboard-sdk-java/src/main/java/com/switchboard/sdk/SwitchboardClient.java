@@ -10,10 +10,12 @@ import java.util.logging.Logger;
 public class SwitchboardClient {
 
     private static final Logger logger = Logger.getLogger(SwitchboardClient.class.getName());
+    private static final long DEFAULT_POLL_INTERVAL = 30;
 
     private final FlagCache cache;
     private final FlagEvaluator evaluator;
     private final HttpFlagFetcher fetcher;
+    private PollingFlagSyncer poller;
 
     private SwitchboardClient(FlagCache cache, FlagEvaluator evaluator, HttpFlagFetcher fetcher) {
         this.cache = cache;
@@ -56,6 +58,12 @@ public class SwitchboardClient {
         return cache;
     }
 
+    public void close() {
+        if (poller != null) {
+            poller.stop();
+        }
+    }
+
     void bootstrap() {
         if (fetcher == null) return;
         try {
@@ -63,8 +71,14 @@ public class SwitchboardClient {
             cache.putAll(flags);
             logger.info("bootstrapped " + flags.size() + " flags");
         } catch (Exception e) {
-            logger.log(Level.WARNING, "failed to bootstrap flags from server", e);
+            logger.log(Level.WARNING, "failed to bootstrap flags from server, starting with empty cache", e);
         }
+    }
+
+    void startPolling(long intervalSeconds) {
+        if (fetcher == null) return;
+        poller = new PollingFlagSyncer(fetcher, cache, intervalSeconds);
+        poller.start();
     }
 
     public static class Builder {
@@ -72,6 +86,8 @@ public class SwitchboardClient {
         private String apiKey;
         private String projectKey;
         private String environmentKey;
+        private long pollIntervalSeconds = DEFAULT_POLL_INTERVAL;
+        private boolean pollingEnabled = true;
 
         public Builder apiUrl(String apiUrl) {
             this.apiUrl = apiUrl;
@@ -93,6 +109,16 @@ public class SwitchboardClient {
             return this;
         }
 
+        public Builder pollInterval(long seconds) {
+            this.pollIntervalSeconds = seconds;
+            return this;
+        }
+
+        public Builder pollingEnabled(boolean enabled) {
+            this.pollingEnabled = enabled;
+            return this;
+        }
+
         public SwitchboardClient build() {
             FlagCache cache = new FlagCache();
             FlagEvaluator evaluator = new FlagEvaluator();
@@ -104,6 +130,11 @@ public class SwitchboardClient {
 
             SwitchboardClient client = new SwitchboardClient(cache, evaluator, fetcher);
             client.bootstrap();
+
+            if (pollingEnabled && fetcher != null) {
+                client.startPolling(pollIntervalSeconds);
+            }
+
             return client;
         }
     }
