@@ -15,13 +15,12 @@ export function Sidebar() {
 
 function NavLink({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
   return (
-    <Link
-      to={to}
+    <a
+      href={to}
       className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-zinc-600 hover:bg-zinc-200 dark:text-zinc-400 dark:hover:bg-zinc-800"
-      activeProps={{ className: "bg-zinc-200 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100" }}
     >
       {icon}
       {label}
-    </Link>
+    </a>
   );
 }

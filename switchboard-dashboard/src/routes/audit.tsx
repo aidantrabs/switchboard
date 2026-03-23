@@ -1,6 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
+import { rootRoute } from "./__root";
 
-export const Route = createFileRoute("/audit")({
+export const auditRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "audit",
   component: () => (
     <div>
       <h1 className="text-2xl font-semibold mb-4">Audit Log</h1>

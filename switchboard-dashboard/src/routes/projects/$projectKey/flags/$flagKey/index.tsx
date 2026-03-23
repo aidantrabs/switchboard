@@ -1,13 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
+import { flagListRoute } from "../index";
 
-export const Route = createFileRoute(
-  "/projects/$projectKey/flags/$flagKey/",
-)({
+export const flagDetailRoute = createRoute({
+  getParentRoute: () => flagListRoute,
+  path: "$flagKey",
   component: FlagDetailPage,
 });
 
 function FlagDetailPage() {
-  const { projectKey, flagKey } = Route.useParams();
+  const { projectKey, flagKey } = flagDetailRoute.useParams();
 
   return (
     <div>

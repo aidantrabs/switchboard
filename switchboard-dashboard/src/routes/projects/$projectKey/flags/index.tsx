@@ -1,14 +1,17 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { flagQueries } from "../../../../api/flags";
 import { FlagTable } from "../../../../components/flags/FlagTable";
+import { projectsRoute } from "../../../projects";
 
-export const Route = createFileRoute("/projects/$projectKey/flags/")({
+export const flagListRoute = createRoute({
+  getParentRoute: () => projectsRoute,
+  path: "$projectKey/flags",
   component: FlagListPage,
 });
 
 function FlagListPage() {
-  const { projectKey } = Route.useParams();
+  const { projectKey } = flagListRoute.useParams();
   const { data: flags, isLoading } = useQuery(flagQueries.list(projectKey));
 
   if (isLoading) return <p className="text-zinc-500">Loading...</p>;

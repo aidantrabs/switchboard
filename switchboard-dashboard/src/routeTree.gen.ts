@@ -1,18 +1,17 @@
-import { Route as rootRoute } from "./routes/__root";
-import { Route as indexRoute } from "./routes/index";
-import { Route as projectsRoute } from "./routes/projects";
-import { Route as flagListRoute } from "./routes/projects/$projectKey/flags/index";
-import { Route as flagDetailRoute } from "./routes/projects/$projectKey/flags/$flagKey/index";
-import { Route as auditRoute } from "./routes/audit";
-import { Route as settingsRoute } from "./routes/settings";
-
-const projectsTree = projectsRoute.addChildren([
-  flagListRoute.addChildren([flagDetailRoute]),
-]);
+import { rootRoute } from "./routes/__root";
+import { indexRoute } from "./routes/index";
+import { projectsRoute, projectsIndexRoute } from "./routes/projects";
+import { flagListRoute } from "./routes/projects/$projectKey/flags/index";
+import { flagDetailRoute } from "./routes/projects/$projectKey/flags/$flagKey/index";
+import { auditRoute } from "./routes/audit";
+import { settingsRoute } from "./routes/settings";
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
-  projectsTree,
+  projectsRoute.addChildren([
+    projectsIndexRoute,
+    flagListRoute.addChildren([flagDetailRoute]),
+  ]),
   auditRoute,
   settingsRoute,
 ]);

@@ -1,9 +1,22 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createRoute, Link, Outlet } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { projectQueries } from "../api/projects";
+import { rootRoute } from "./__root";
 import { FolderOpen } from "lucide-react";
 
-export const Route = createFileRoute("/projects")({
+export const projectsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "projects",
+  component: ProjectsLayout,
+});
+
+function ProjectsLayout() {
+  return <Outlet />;
+}
+
+export const projectsIndexRoute = createRoute({
+  getParentRoute: () => projectsRoute,
+  path: "/",
   component: ProjectsPage,
 });
 
@@ -22,7 +35,8 @@ function ProjectsPage() {
           {projects.map((p) => (
             <Link
               key={p.key}
-              to={`/projects/${p.key}/flags`}
+              to="/projects/$projectKey/flags"
+              params={{ projectKey: p.key }}
               className="flex items-center gap-3 p-4 border border-zinc-200 rounded-lg hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50"
             >
               <FolderOpen size={18} className="text-zinc-400" />

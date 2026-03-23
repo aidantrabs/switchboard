@@ -1,6 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
+import { rootRoute } from "./__root";
 
-export const Route = createFileRoute("/settings")({
+export const settingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "settings",
   component: () => (
     <div>
       <h1 className="text-2xl font-semibold mb-4">Settings</h1>

@@ -8,7 +8,7 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+// using <a> instead of Link for simpler typing with dynamic params
 import type { FlagResponse } from "../../api/types";
 import { ArrowUpDown } from "lucide-react";
 
@@ -94,12 +94,12 @@ export function FlagTable({
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id} className="py-2 px-3">
                   {cell.column.id === "key" ? (
-                    <Link
-                      to={`/projects/${projectKey}/flags/${row.original.key}`}
+                    <a
+                      href={`/projects/${projectKey}/flags/${row.original.key}`}
                       className="text-blue-600 hover:underline dark:text-blue-400"
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </Link>
+                    </a>
                   ) : (
                     flexRender(cell.column.columnDef.cell, cell.getContext())
                   )}

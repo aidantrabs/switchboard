@@ -1,6 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createRoute } from "@tanstack/react-router";
+import { rootRoute } from "./__root";
 
-export const Route = createFileRoute("/")({
+export const indexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/",
   component: () => (
     <div>
       <h1 className="text-2xl font-semibold mb-4">Dashboard</h1>
