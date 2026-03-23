@@ -8,31 +8,59 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import { useState } from "react";
-// using <a> instead of Link for simpler typing with dynamic params
 import type { FlagResponse } from "../../api/types";
-import { ArrowUpDown } from "lucide-react";
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "../ui/table";
+import { Badge } from "../ui/badge";
+import { Input } from "../ui/input";
+import { ArrowUpDown, Flag } from "lucide-react";
 
 const columnHelper = createColumnHelper<FlagResponse>();
 
+const flagTypeVariant = (type: string) => {
+  switch (type) {
+    case "RELEASE": return "default" as const;
+    case "EXPERIMENT": return "warning" as const;
+    case "PERMISSION": return "secondary" as const;
+    case "OPERATIONAL": return "outline" as const;
+    default: return "secondary" as const;
+  }
+};
+
 const columns = [
   columnHelper.accessor("key", {
-    header: "Key",
+    header: "Flag",
     cell: (info) => (
-      <span className="font-mono text-sm">{info.getValue()}</span>
+      <div className="flex items-center gap-2">
+        <Flag size={14} className="text-muted-foreground shrink-0" />
+        <span className="font-mono text-sm font-medium">{info.getValue()}</span>
+      </div>
     ),
   }),
-  columnHelper.accessor("name", { header: "Name" }),
+  columnHelper.accessor("name", {
+    header: "Name",
+    cell: (info) => (
+      <span className="text-muted-foreground">{info.getValue()}</span>
+    ),
+  }),
   columnHelper.accessor("flagType", {
     header: "Type",
     cell: (info) => (
-      <span className="text-xs px-2 py-0.5 bg-zinc-100 rounded dark:bg-zinc-800">
+      <Badge variant={flagTypeVariant(info.getValue())}>
         {info.getValue().toLowerCase()}
-      </span>
+      </Badge>
     ),
   }),
   columnHelper.accessor("updatedAt", {
-    header: "Last Modified",
-    cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+    header: "Modified",
+    cell: (info) => (
+      <span className="text-muted-foreground text-xs">
+        {new Date(info.getValue()).toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })}
+      </span>
+    ),
   }),
 ];
 
@@ -58,60 +86,64 @@ export function FlagTable({
   });
 
   return (
-    <div>
-      <input
-        type="text"
+    <div className="space-y-4">
+      <Input
         placeholder="Search flags..."
         value={globalFilter}
         onChange={(e) => setGlobalFilter(e.target.value)}
-        className="mb-4 px-3 py-1.5 border border-zinc-200 rounded text-sm w-64 dark:bg-zinc-900 dark:border-zinc-700"
+        className="max-w-sm"
       />
-      <table className="w-full text-sm">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="border-b border-zinc-200 dark:border-zinc-800">
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  onClick={header.column.getToggleSortingHandler()}
-                  className="text-left py-2 px-3 font-medium text-zinc-500 cursor-pointer select-none"
-                >
-                  <div className="flex items-center gap-1">
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                    <ArrowUpDown size={12} />
-                  </div>
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr
-              key={row.id}
-              className="border-b border-zinc-100 hover:bg-zinc-50 dark:border-zinc-800/50 dark:hover:bg-zinc-800/30"
-            >
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="py-2 px-3">
-                  {cell.column.id === "key" ? (
-                    <a
-                      href={`/projects/${projectKey}/flags/${row.original.key}`}
-                      className="text-blue-600 hover:underline dark:text-blue-400"
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </a>
-                  ) : (
-                    flexRender(cell.column.columnDef.cell, cell.getContext())
-                  )}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {table.getRowModel().rows.length === 0 && (
-        <p className="text-zinc-500 text-center py-8">No flags found.</p>
-      )}
+
+      <div className="rounded-lg border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                    className="cursor-pointer select-none"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      <ArrowUpDown size={12} className="text-muted-foreground" />
+                    </div>
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
+                  No flags found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {cell.column.id === "key" ? (
+                        <a
+                          href={`/projects/${projectKey}/flags/${row.original.key}`}
+                          className="hover:underline"
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </a>
+                      ) : (
+                        flexRender(cell.column.columnDef.cell, cell.getContext())
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }
