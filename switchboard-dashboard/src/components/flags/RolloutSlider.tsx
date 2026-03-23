@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useUpdateRollout } from "../../api/flags";
+import { Badge } from "../ui/badge";
 
 export function RolloutSlider({
   projectKey,
@@ -16,7 +17,11 @@ export function RolloutSlider({
   const updateRollout = useUpdateRollout(projectKey);
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-muted-foreground">Rollout</span>
+        <Badge variant="outline" className="font-mono">{percentage}%</Badge>
+      </div>
       <input
         type="range"
         min={0}
@@ -25,9 +30,12 @@ export function RolloutSlider({
         onChange={(e) => setPercentage(Number(e.target.value))}
         onMouseUp={() => updateRollout.mutate({ flagKey, envKey, percentage })}
         onTouchEnd={() => updateRollout.mutate({ flagKey, envKey, percentage })}
-        className="flex-1"
+        className="w-full h-2 rounded-full appearance-none bg-muted accent-primary cursor-pointer"
       />
-      <span className="text-sm font-mono w-10 text-right">{percentage}%</span>
+      <div className="flex justify-between text-xs text-muted-foreground">
+        <span>0%</span>
+        <span>100%</span>
+      </div>
     </div>
   );
 }

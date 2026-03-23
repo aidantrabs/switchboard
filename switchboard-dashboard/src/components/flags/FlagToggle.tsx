@@ -1,4 +1,5 @@
 import { useToggleFlag } from "../../api/flags";
+import { Switch } from "../ui/switch";
 
 export function FlagToggle({
   projectKey,
@@ -14,18 +15,10 @@ export function FlagToggle({
   const toggle = useToggleFlag(projectKey);
 
   return (
-    <button
-      onClick={() => toggle.mutate({ flagKey, envKey })}
+    <Switch
+      checked={enabled}
+      onCheckedChange={() => toggle.mutate({ flagKey, envKey })}
       disabled={toggle.isPending}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-        enabled ? "bg-green-500" : "bg-zinc-300 dark:bg-zinc-600"
-      }`}
-    >
-      <span
-        className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${
-          enabled ? "translate-x-6" : "translate-x-1"
-        }`}
-      />
-    </button>
+    />
   );
 }
