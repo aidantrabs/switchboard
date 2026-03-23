@@ -88,6 +88,7 @@ public class SwitchboardClient {
         private String environmentKey;
         private long pollIntervalSeconds = DEFAULT_POLL_INTERVAL;
         private boolean pollingEnabled = true;
+        private String localFlagsFile;
 
         public Builder apiUrl(String apiUrl) {
             this.apiUrl = apiUrl;
@@ -119,11 +120,26 @@ public class SwitchboardClient {
             return this;
         }
 
+        public Builder localFlagsFile(String path) {
+            this.localFlagsFile = path;
+            return this;
+        }
+
         public SwitchboardClient build() {
             FlagCache cache = new FlagCache();
             FlagEvaluator evaluator = new FlagEvaluator();
-            HttpFlagFetcher fetcher = null;
 
+            if (localFlagsFile != null) {
+                try {
+                    var flags = LocalFileFlagLoader.loadFromFile(localFlagsFile);
+                    cache.putAll(flags);
+                } catch (Exception e) {
+                    logger.log(Level.WARNING, "failed to load local flags file: " + localFlagsFile, e);
+                }
+                return new SwitchboardClient(cache, evaluator, null);
+            }
+
+            HttpFlagFetcher fetcher = null;
             if (apiUrl != null) {
                 fetcher = new HttpFlagFetcher(apiUrl, apiKey, projectKey, environmentKey);
             }

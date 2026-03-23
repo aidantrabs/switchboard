@@ -1,0 +1,7 @@
+{
+  "flags": {
+    "new-checkout": { "enabled": true, "variant": "on" },
+    "dark-mode": { "enabled": false, "variant": "off" },
+    "premium-dashboard": { "enabled": true, "variant": "on" }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "flags": {
+    "feature-a": { "enabled": true, "variant": "on" },
+    "feature-b": { "enabled": false, "variant": "off" }
+  }
+}
