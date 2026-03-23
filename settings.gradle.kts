@@ -11,3 +11,4 @@ pluginManagement {
 rootProject.name = "switchboard"
 
 include("switchboard-server")
+include("switchboard-sdk-java")
