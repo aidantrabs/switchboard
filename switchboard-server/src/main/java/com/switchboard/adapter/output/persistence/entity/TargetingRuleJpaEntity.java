@@ -26,9 +26,6 @@ public class TargetingRuleJpaEntity {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @OneToMany(mappedBy = "targetingRuleId", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ConditionJpaEntity> conditions = new ArrayList<>();
-
     protected TargetingRuleJpaEntity() {}
 
     public TargetingRuleJpaEntity(UUID id, UUID flagEnvConfigId, int priority,
@@ -45,7 +42,10 @@ public class TargetingRuleJpaEntity {
     public int getPriority() { return priority; }
     public String getServedVariantKey() { return servedVariantKey; }
     public Instant getCreatedAt() { return createdAt; }
-    public List<ConditionJpaEntity> getConditions() { return conditions; }
 
+    @Transient
+    private List<ConditionJpaEntity> conditions = new ArrayList<>();
+
+    public List<ConditionJpaEntity> getConditions() { return conditions; }
     public void setConditions(List<ConditionJpaEntity> conditions) { this.conditions = conditions; }
 }

@@ -2,8 +2,6 @@ package com.switchboard.adapter.output.persistence.entity;
 
 import jakarta.persistence.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -42,9 +40,6 @@ public class FeatureFlagJpaEntity {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    @OneToMany(mappedBy = "flagId", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<VariantJpaEntity> variants = new ArrayList<>();
-
     protected FeatureFlagJpaEntity() {}
 
     public FeatureFlagJpaEntity(UUID id, UUID projectId, String key, String name,
@@ -72,11 +67,8 @@ public class FeatureFlagJpaEntity {
     public Long getStaleAfter() { return staleAfter; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
-    public List<VariantJpaEntity> getVariants() { return variants; }
-
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }
     public void setDefaultVariant(String defaultVariant) { this.defaultVariant = defaultVariant; }
     public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
-    public void setVariants(List<VariantJpaEntity> variants) { this.variants = variants; }
 }

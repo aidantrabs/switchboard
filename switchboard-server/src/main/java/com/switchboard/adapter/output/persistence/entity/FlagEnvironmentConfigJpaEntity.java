@@ -2,8 +2,6 @@ package com.switchboard.adapter.output.persistence.entity;
 
 import jakarta.persistence.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -31,10 +29,6 @@ public class FlagEnvironmentConfigJpaEntity {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    @OneToMany(mappedBy = "flagEnvConfigId", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("priority ASC")
-    private List<TargetingRuleJpaEntity> targetingRules = new ArrayList<>();
-
     protected FlagEnvironmentConfigJpaEntity() {}
 
     public FlagEnvironmentConfigJpaEntity(UUID id, UUID flagId, UUID environmentId,
@@ -54,10 +48,7 @@ public class FlagEnvironmentConfigJpaEntity {
     public boolean isEnabled() { return enabled; }
     public int getRolloutPercentage() { return rolloutPercentage; }
     public Instant getUpdatedAt() { return updatedAt; }
-    public List<TargetingRuleJpaEntity> getTargetingRules() { return targetingRules; }
-
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
     public void setRolloutPercentage(int rolloutPercentage) { this.rolloutPercentage = rolloutPercentage; }
     public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
-    public void setTargetingRules(List<TargetingRuleJpaEntity> targetingRules) { this.targetingRules = targetingRules; }
 }
