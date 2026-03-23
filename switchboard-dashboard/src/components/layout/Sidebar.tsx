@@ -1,25 +1,57 @@
-import { Link } from "@tanstack/react-router";
-import { Flag, FolderOpen, ScrollText, Settings } from "lucide-react";
+import { useLocation } from "@tanstack/react-router";
+import { LayoutDashboard, FolderOpen, ScrollText, Settings, ToggleRight } from "lucide-react";
+import { cn } from "../../lib/utils";
+import { Separator } from "../ui/separator";
+
+const navigation = [
+  { to: "/", icon: LayoutDashboard, label: "Overview" },
+  { to: "/projects", icon: FolderOpen, label: "Projects" },
+  { to: "/audit", icon: ScrollText, label: "Audit Log" },
+  { to: "/settings", icon: Settings, label: "Settings" },
+];
 
 export function Sidebar() {
   return (
-    <aside className="w-56 border-r border-zinc-200 bg-zinc-50 p-4 flex flex-col gap-1 dark:bg-zinc-900 dark:border-zinc-800">
-      <div className="text-lg font-semibold mb-4 px-2">switchboard</div>
-      <NavLink to="/" icon={<Flag size={16} />} label="Dashboard" />
-      <NavLink to="/projects" icon={<FolderOpen size={16} />} label="Projects" />
-      <NavLink to="/audit" icon={<ScrollText size={16} />} label="Audit Log" />
-      <NavLink to="/settings" icon={<Settings size={16} />} label="Settings" />
+    <aside className="hidden md:flex w-60 flex-col border-r bg-sidebar text-sidebar-foreground">
+      <div className="flex items-center gap-2.5 px-5 py-4">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+          <ToggleRight size={16} />
+        </div>
+        <span className="text-sm font-semibold tracking-tight">switchboard</span>
+      </div>
+
+      <Separator />
+
+      <nav className="flex-1 px-3 py-3 space-y-0.5">
+        {navigation.map((item) => (
+          <NavLink key={item.to} {...item} />
+        ))}
+      </nav>
+
+      <Separator />
+
+      <div className="px-5 py-3">
+        <p className="text-xs text-muted-foreground">v0.1.0</p>
+      </div>
     </aside>
   );
 }
 
-function NavLink({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
+function NavLink({ to, icon: Icon, label }: { to: string; icon: React.ElementType; label: string }) {
+  const location = useLocation();
+  const isActive = to === "/" ? location.pathname === "/" : location.pathname.startsWith(to);
+
   return (
     <a
       href={to}
-      className="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-zinc-600 hover:bg-zinc-200 dark:text-zinc-400 dark:hover:bg-zinc-800"
+      className={cn(
+        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+        isActive
+          ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+          : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground",
+      )}
     >
-      {icon}
+      <Icon size={16} />
       {label}
     </a>
   );
