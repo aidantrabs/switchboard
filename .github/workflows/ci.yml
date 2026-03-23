@@ -1,0 +1,81 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  server:
+    name: server build + test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: switchboard_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 22
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: compile all modules
+        run: ./gradlew compileJava
+
+      - name: run unit + architecture tests
+        run: >-
+          ./gradlew :switchboard-server:test
+          --tests "com.switchboard.domain.*"
+          --tests "com.switchboard.application.*"
+          --tests "com.switchboard.architecture.*"
+
+      - name: run sdk tests
+        run: ./gradlew :switchboard-sdk-java:test
+
+      - name: run openfeature tests
+        run: ./gradlew :switchboard-openfeature-provider:test
+
+      - name: run integration tests
+        run: ./gradlew :switchboard-server:test --tests "com.switchboard.integration.*"
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/switchboard_test
+          SPRING_DATASOURCE_USERNAME: test
+          SPRING_DATASOURCE_PASSWORD: test
+
+  dashboard:
+    name: dashboard build + typecheck
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: switchboard-dashboard
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: switchboard-dashboard/package-lock.json
+
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx vite build
